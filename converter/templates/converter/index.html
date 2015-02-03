@@ -2,30 +2,38 @@
 
 <link rel="stylesheet" type="text/css" href="{% static 'converter/style.css' %}" />
 <script type="text/javascript">
-    function pickCurrencies () {
+    var DICT = {
+        {% for k, v in engine.currencies_available.items %}
+            "{{k}}": [
+                {% for x in v %}
+                    "{{x}}" {% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            ]
+            {% if not forloop.last %}, {% endif %}
+         {% endfor %}
+    };
+    
+    function pickCurrencies() {
         var lang = document.getElementById("languages").value;
-        var dict = {
-            {% for k, v in engine.currencies_available.items %}
-                "{{k}}": [
-                    {% for x in v %}
-                        "{{x}}" {% if not forloop.last %}, {% endif %}
-                    {% endfor %}
-                ]
-                {% if not forloop.last %}, {% endif %}
-             {% endfor %}
-        };
-        var list = dict[lang]
+        // rewrite currencies select if languages selected an empty field
+        if ( lang == "" ) { 
+            document.getElementById("currencies").innerHTML = "<option></option>";
+            return;
+        }
+        //
+        var list = DICT[lang]
         var result = "<option value=\"\" ></option>\n";
         var len = list.length;
-        
+
         for (var i = 0; i < len; i++) {
             result += "<option value=\"" + list[i] + "\" >" + list[i] + "</option>\n"
         };
         document.getElementById("currencies").innerHTML = result;
     }
+    
 </script>
 {% if engine.result %}
-    <div class="result"> {{engine.result}} </div>
+    <div class="result"> Result is: {{engine.result}} </div>
 {% endif %}
 
 <form action="{% url 'converter:results' %}" method="post">
