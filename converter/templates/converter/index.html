@@ -1,0 +1,46 @@
+{% load staticfiles %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'converter/style.css' %}" />
+<script type="text/javascript">
+    function pickCurrencies () {
+        var lang = document.getElementById("languages").value;
+        var dict = {
+            {% for k, v in engine.currencies_available.items %}
+                "{{k}}": [
+                    {% for x in v %}
+                        "{{x}}" {% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                ]
+                {% if not forloop.last %}, {% endif %}
+             {% endfor %}
+        };
+        var list = dict[lang]
+        var result = "<option value=\"\" ></option>\n";
+        var len = list.length;
+        
+        for (var i = 0; i < len; i++) {
+            result += "<option value=\"" + list[i] + "\" >" + list[i] + "</option>\n"
+        };
+        document.getElementById("currencies").innerHTML = result;
+    }
+</script>
+{% if engine.result %}
+    <div class="result"> {{engine.result}} </div>
+{% endif %}
+
+<form action="{% url 'converter:results' %}" method="post">
+{% csrf_token %}
+<label for="language">language</label>
+<select id="languages" name="language" onchange="pickCurrencies()" >
+    <option value="" ></option>
+    {% for lang in engine.langs_available %}
+    <option value="{{lang}}">{{lang}}</option>
+    {% endfor %}
+</select><br>
+<label for="currency">currency</label>
+<select id="currencies" name="currency">
+</select><br>
+<label for="number">{{engine.info}}</label><br>
+<input type="text" name="number" {% if engine.number %} value="{{engine.number}}" {% endif %}><br>
+<input type="submit" name="convert">
+</form>
