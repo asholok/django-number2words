@@ -1,8 +1,15 @@
 body {
-    background: yellow;
+    background: #D0D0D0;
+    color: 444444;
 }
 
-li a {
-    color: green;
-    font-size: 20px;
+form[name=converter] {
+    margin: 24px;
+}
+
+.result {
+    padding: 16px;
+    margin: 24px;
+    border: solid 1px #CDCDCD;
+    border-radius: 3px;    
 }
